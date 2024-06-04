@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Employee Dashboard{% endblock %}
+
+{% block content %}
+<h2>Welcome, {{ user.username }}!</h2>
+
+<div class="card">
+    <h3>Submit Your Reimbursement Request</h3>
+    <p><a href="{% url 'reimbursements:submit' %}">Submit Reimbursement</a></p>
+</div>
+
+<div class="card">
+    <h3>Track Your Reimbursements</h3>
+    {% if reimbursements %}
+        <ul>
+        {% for reimbursement in reimbursements %}
+            <li>
+                <strong>{{ reimbursement.category }}:</strong> 
+                {{ reimbursement.amount }} - 
+                {{ reimbursement.status }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have not submitted any reimbursement requests yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Reimbursement List{% endblock %}
+
+{% block content %}
+<h2>Reimbursement List</h2>
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Manager Comments</th>
+        <th>Actions</th>
+    </tr>
+    {% for reimbursement in reimbursements %}
+    <tr>
+        <td>{{ reimbursement.category }}</td>
+        <td>{{ reimbursement.amount }}</td>
+        <td>{{ reimbursement.status }}</td>
+        <td>{{ reimbursement.manager_comments }}</td>
+        <td>
+            <a href="{% url 'reimbursements:detail' reimbursement.pk %}">View Details</a>
+            {% if reimbursement.status == 'pending' %}
+                {% if user.is_superuser %}
+                    <p>Superuser detected</p>
+                    <form method="post" action="{% url 'reimbursements:approve' reimbursement.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="approve">
+                        <textarea name="manager_comments" placeholder="Add comments"></textarea>
+                        <button type="submit">Approve</button>
+                    </form>
+                    <form method="post" action="{% url 'reimbursements:decline' reimbursement.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="decline">
+                        <textarea name="manager_comments" placeholder="Add comments"></textarea>
+                        <button type="submit">Decline</button>
+                    </form>
+                {% elif user.is_manager and reimbursement.employee.manager == user %}
+                   
+                    <form method="post" action="{% url 'reimbursements:approve' reimbursement.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="approve">
+                        <textarea name="manager_comments" placeholder="Add comments"></textarea>
+                        <button type="submit">Approve</button>
+                    </form>
+                    <form method="post" action="{% url 'reimbursements:decline' reimbursement.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="decline">
+                        <button type="submit">Decline</button>
+                    </form>
+                {% else %}
+                    <p>Access Denied</p>
+                {% endif %}
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

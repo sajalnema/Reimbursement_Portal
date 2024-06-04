@@ -1,0 +1,24 @@
+<!-- templates/accounts/manager_dashboard.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Manager Dashboard{% endblock %}
+
+{% block content %}
+<h2>Manager Dashboard</h2>
+<h3>Employees managed by {{ manager.username }}</h3>
+<div class="employee-cards">
+  {% for employee in employees %}
+    <div class="card">
+      <p><strong>Name:</strong> {{ employee.username }}</p>
+      <p><strong>Email:</strong> {{ employee.email }}</p>
+    </div>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <h3>View Detailed List of Managed Employees</h3>
+  <p><a href="{% url 'accounts:manager_employees' %}">View Managed Employees</a></p>
+</div>
+
+{% endblock %}

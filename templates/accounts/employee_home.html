@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Employee Dashboard{% endblock %}
+
+{% block content %}
+<h2>Welcome, {{ user.username }}!</h2>
+<p>You are logged in as an employee.</p>
+
+<div class="card">
+    <h3>Your Manager</h3>
+    {% if manager %}
+        <p>{{ manager.username }}</p>
+    {% else %}
+        <p>No manager assigned for now</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h3>Submit Reimbursement Request</h3>
+    <p><a href="{% url 'reimbursements:submit' %}">Submit Reimbursement Request</a></p>
+</div>
+
+<div class="card">
+    <h3>Track Your Reimbursements</h3>
+    {% if reimbursements %}
+        <ul>
+        {% for reimbursement in reimbursements %}
+            <li>
+                <strong>{{ reimbursement.category }}:</strong> 
+                {{ reimbursement.amount }} - 
+                {{ reimbursement.status }} - 
+                <strong>Manager Comments:</strong> {{ reimbursement.manager_comments|default:"No comments" }}
+                <br>
+                <strong>Description:</strong> {{ reimbursement.description|default:"No description" }}
+                <br>
+                <strong>Date:</strong> {{ reimbursement.date }}
+                <br>
+                {% if reimbursement.document %}
+                    <strong>Document:</strong> <a href="{{ reimbursement.document.url }}">View Document</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have not submitted any reimbursement requests yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

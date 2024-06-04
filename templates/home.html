@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h2>Welcome{{ user.username }}!</h2>
+{% if user.is_employee %}
+    <p><a href="{% url 'reimbursements:submit' %}">Submit Reimbursement Request</a></p>
+{% endif %}
+{% if user.is_manager %}
+    <p><a href="{% url 'reimbursements:list' %}">View Reimbursement Requests</a></p>
+{% endif %}
+{% if user.is_superuser %}
+    <p><a href="{% url 'accounts:manage_departments' %}">Manage Departments</a></p>
+    <p><a href="{% url 'accounts:manage_employees' %}">Manage Employees</a></p>
+{% endif %}
+{% endblock %}

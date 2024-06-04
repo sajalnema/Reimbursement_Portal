@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block content %}
+<h2>Sign In</h2>
+{% if form.errors %}
+    <div class="alert alert-danger">
+        {% for field in form %}
+            {% for error in field.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign In</button>
+    <input type="hidden" name="next" value="{{ next }}">
+</form>
+<p>If you have not created an account yet, then please <a href="{% url 'accounts:signup' %}">sign up</a> first.</p>
+{% endblock %}

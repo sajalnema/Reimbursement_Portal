@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Employees{% endblock %}
+
+{% block content %}
+  <h2>Manage Employees</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Employee</button>
+  </form>
+
+  {% if form.errors %}
+    <div class="errors">
+      <ul>
+        {% for field, errors in form.errors.items %}
+          <li>{{ field }}: {{ errors|striptags }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <h3>Existing Employees</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Department</th>
+        <th>Manager</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for employee in employees %}
+      <tr>
+        <td>{{ employee.username }}</td>
+        <td>{{ employee.first_name }}</td>
+        <td>{{ employee.last_name }}</td>
+        <td>{{ employee.email }}</td>
+        <td>{% if employee.department %}{{ employee.department.name }}{% else %}{% endif %}</td>
+        <td>{% if employee.manager %}{{ employee.manager.username }}{% else %}{% endif %}</td>
+        <td>
+          <a href="{% url 'accounts:delete_employee_confirmation' employee.pk %}">Delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h3>Existing Managers</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Department</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for manager in managers %}
+      <tr>
+        <td>{{ manager.username }}</td>
+        <td>{{ manager.first_name }}</td>
+        <td>{{ manager.last_name }}</td>
+        <td>{{ manager.email }}</td>
+        <td>{% if manager.department %}{{ manager.department.name }}{% else %}{% endif %}</td>
+        <td>
+          <a href="{% url 'accounts:delete_employee_confirmation' manager.pk %}">Delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

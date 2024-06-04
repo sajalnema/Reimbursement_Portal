@@ -1,0 +1,17 @@
+<!-- templates/accounts/admin_dashboard.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h2>Admin Dashboard</h2>
+{% for manager in managers %}
+  <h3>Manager: {{ manager.username }}</h3>
+  <ul>
+    {% for employee in manager.subordinates.all %}
+      <li>{{ employee.username }}</li>
+    {% endfor %}
+  </ul>
+{% endfor %}
+{% endblock %}
