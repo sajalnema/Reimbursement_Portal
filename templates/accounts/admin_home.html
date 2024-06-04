@@ -29,6 +29,7 @@
                 {% if reimbursement.status == 'pending' %}
                     <form method="post" action="{% url 'reimbursements:approve' reimbursement.pk %}" style="display:inline;">
                         {% csrf_token %}
+                        <textarea name="manager_comments" placeholder="Add comments"></textarea>
                         <input type="hidden" name="action" value="approve">
                         <button type="submit">Approve</button>
                     </form>
@@ -74,7 +75,7 @@
             <td>{{ employee.email }}</td>
             <td>
                 {% if employee.department %}
-                    {{ employee.department.name }}
+                    {{ employee.department.name }} 
                 {% else %}
                     No department
                 {% endif %}
@@ -93,9 +94,11 @@
                     <select name="manager_id">
                         <option value="">Select Manager</option>
                         {% for manager in managers %}
-                        <option value="{{ manager.id }}" {% if employee.manager == manager %}selected{% endif %}>
-                            {{ manager.username }}
-                        </option>
+                            {% if manager.department == employee.department %}
+                                <option value="{{ manager.id }}" {% if employee.manager == manager %}selected{% endif %}>
+                                    {{ manager.username }}
+                                </option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                     <button type="submit">Assign</button>

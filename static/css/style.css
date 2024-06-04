@@ -24,6 +24,7 @@ nav {
 }
 
 nav ul {
+    color: #000000;
     list-style-type: none;
     padding: 0;
     margin: 0;
@@ -32,11 +33,12 @@ nav ul {
 }
 
 nav ul li {
+    color:#000000
     margin-left: 20px;
 }
 
 nav ul li a {
-    color: #ffffff;
+    color: #000000;
     text-decoration: none;
     padding: 8px 15px;
     display: flex;
@@ -59,18 +61,7 @@ nav ul li a.home-button:hover {
     background-color: #ffffff;
 }
 
-nav ul li form button {
-    background-color: #ff0000;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    padding: 0;
-}
 
-nav ul li form button:hover {
-    background-color: #ffffff;
-    border-radius: 4px;
-}
 
 .container {
     max-width: 600px;
@@ -152,3 +143,50 @@ form input[type="submit"]:hover {
 .card a:hover {
     text-decoration: underline;
 }
+
+form textarea {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.reimbursement-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.reimbursement-item textarea {
+    margin-right: 10px;
+    resize: vertical;
+    height: 40px;
+    width: 200px;
+}
+
+.reimbursement-item button {
+    margin-right: 5px;
+    padding: 5px 10px;
+}
+
+nav ul li form button {
+    background-color: #000000;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 8px 15px;
+    display: inline-block;
+    border-radius: 4px;
+}
+
+nav ul li form button:hover {
+    background-color: #333333;
+    color: #ffffff;
+    border-radius: 4px;
+}
+
+

@@ -22,7 +22,6 @@
             <a href="{% url 'reimbursements:detail' reimbursement.pk %}">View Details</a>
             {% if reimbursement.status == 'pending' %}
                 {% if user.is_superuser %}
-                    <p>Superuser detected</p>
                     <form method="post" action="{% url 'reimbursements:approve' reimbursement.pk %}" style="display: inline;">
                         {% csrf_token %}
                         <input type="hidden" name="action" value="approve">
@@ -32,7 +31,6 @@
                     <form method="post" action="{% url 'reimbursements:decline' reimbursement.pk %}" style="display: inline;">
                         {% csrf_token %}
                         <input type="hidden" name="action" value="decline">
-                        <textarea name="manager_comments" placeholder="Add comments"></textarea>
                         <button type="submit">Decline</button>
                     </form>
                 {% elif user.is_manager and reimbursement.employee.manager == user %}

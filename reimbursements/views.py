@@ -93,7 +93,7 @@ def approve_reimbursement(request, pk):
     if request.method == 'POST':
         action = request.POST.get('action')
         reimbursement.manager_comments = request.POST.get('manager_comments', '')
-        reimbursement.date = request.POST.get('date')  # Add this line
+        reimbursement.date = request.POST.get('date')  
         if action == 'approve':
             reimbursement.status = 'approved'
         elif action == 'decline':
