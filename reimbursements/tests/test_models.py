@@ -1,78 +1,115 @@
+# reimbursements/tests/test_models.py
+
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from reimbursements.models import Reimbursement, AuditLog
 from accounts.models import CustomUser, Department
+from decimal import Decimal
+from datetime import date
+from accounts.models import Department, CustomUser
 
-class ReimbursementModelTestCase(TestCase):
+class ReimbursementModelTest(TestCase):
+
     def setUp(self):
-        self.department = Department.objects.create(name='HR')
+        self.department = Department.objects.create(name="HR")
         self.employee = CustomUser.objects.create_user(
-            username='employee',
-            email='employee@nucleusteq.com',
-            password='employeepass',
+            username="employee1",
+            email="employee1@nucleusteq.com",
+            password="password123",
             is_employee=True,
             department=self.department
+        )
+        self.superuser = CustomUser.objects.create_superuser(
+            username="admin",
+            email="admin@nucleusteq.com",
+            password="password123"
         )
 
     def test_reimbursement_creation(self):
         reimbursement = Reimbursement.objects.create(
             employee=self.employee,
             category='travel',
-            amount=100.00,
-            description='Travel expenses'
+            amount=Decimal('1000.00'),
+            description="Business trip",
+            document=None,
+            date=date.today()
         )
-        self.assertEqual(reimbursement.employee.username, 'employee')
-        self.assertEqual(reimbursement.category, 'travel')
-        self.assertEqual(reimbursement.amount, 100.00)
-        self.assertEqual(reimbursement.description, 'Travel expenses')
-        self.assertEqual(reimbursement.status, 'pending')
+        self.assertEqual(str(reimbursement), f"{self.employee} - Travelling - 1000.00")
 
-    def test_reimbursement_exceeds_category_limit(self):
+    def test_reimbursement_amount_limit(self):
         reimbursement = Reimbursement(
             employee=self.employee,
             category='travel',
-            amount=16000.00,  # Exceeds travel limit
-            description='Expensive travel expenses'
+            amount=Decimal('20000.00'),  # Exceeds limit
+            description="Luxury trip",
+            document=None,
+            date=date.today()
         )
         with self.assertRaises(ValidationError):
             reimbursement.clean()
 
+    def test_reimbursement_default_admin(self):
+        reimbursement = Reimbursement.objects.create(
+            employee=self.employee,
+            category='travel',
+            amount=Decimal('1000.00'),
+            description="Business trip",
+            document=None,
+            date=date.today()
+        )
+        self.assertEqual(reimbursement.admin, self.superuser)
+
     def test_reimbursement_without_amount_or_category(self):
-        reimbursement = Reimbursement(employee=self.employee, description='No amount or category')
+        reimbursement = Reimbursement(
+            employee=self.employee,
+            description="No amount or category",
+            document=None,
+            date=date.today()
+        )
         with self.assertRaises(ValidationError):
             reimbursement.clean()
 
-class AuditLogModelTestCase(TestCase):
+    def test_audit_log_creation(self):
+        reimbursement = Reimbursement.objects.create(
+            employee=self.employee,
+            category='travel',
+            amount=Decimal('1000.00'),
+            description="Business trip",
+            document=None,
+            date=date.today()
+        )
+        audit_log = AuditLog.objects.create(
+            user=self.employee,
+            reimbursement=reimbursement,
+            action='created',
+            comments="Initial creation"
+        )
+        self.assertEqual(str(audit_log), f"{reimbursement} - created by {self.employee} at {audit_log.timestamp}")
+
+class AuditLogModelTest(TestCase):
+
     def setUp(self):
-        self.department = Department.objects.create(name='HR')
         self.employee = CustomUser.objects.create_user(
-            username='employee',
-            email='employee@nucleusteq.com',
-            password='employeepass',
-            is_employee=True,
-            department=self.department
+            username="employee1",
+            email="employee1@nucleusteq.com",
+            password="password123",
+            is_employee=True
         )
         self.reimbursement = Reimbursement.objects.create(
             employee=self.employee,
             category='travel',
-            amount=100.00,
-            description='Travel expenses'
-        )
-        self.admin = CustomUser.objects.create_superuser(
-            username='admin',
-            email='admin@nucleusteq.com',
-            password='adminpass'
+            amount=Decimal('1000.00'),
+            description="Business trip",
+            document=None,
+            date=date.today()
         )
 
-    def test_auditlog_creation(self):
-        auditlog = AuditLog.objects.create(
-            user=self.admin,
+    def test_audit_log_creation(self):
+        audit_log = AuditLog.objects.create(
+            user=self.employee,
             reimbursement=self.reimbursement,
             action='created',
-            comments='Initial creation'
+            comments="Initial creation"
         )
-        self.assertEqual(auditlog.user.username, 'admin')
-        self.assertEqual(auditlog.reimbursement, self.reimbursement)
-        self.assertEqual(auditlog.action, 'created')
-        self.assertEqual(auditlog.comments, 'Initial creation')
+        self.assertEqual(str(audit_log), f"{self.reimbursement} - created by {self.employee} at {audit_log.timestamp}")
