@@ -174,19 +174,15 @@ form textarea {
 }
 
 nav ul li form button {
-    background-color: #000000;
-    border: none;
+    background-color: #000;  /* Black color for the logout button */
     color: #fff;
-    cursor: pointer;
+    border: none;
     padding: 8px 15px;
-    display: inline-block;
-    border-radius: 4px;
+    cursor: pointer;
 }
 
 nav ul li form button:hover {
-    background-color: #333333;
-    color: #ffffff;
+    background-color: #333; /* Slightly darker on hover */
     border-radius: 4px;
 }
-
 
