@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
 class Department(models.Model):
     name = models.CharField(max_length=100)
     manager = models.ForeignKey('CustomUser', on_delete=models.SET_NULL, null=True, blank=True, related_name='managed_departments')
@@ -13,6 +14,7 @@ class CustomUser(AbstractUser):
     is_manager = models.BooleanField(default=False)
     department = models.ForeignKey('Department', on_delete=models.SET_NULL, null=True, blank=True)
     manager = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='subordinates')
+    email = models.EmailField(max_length=254, unique=True)
 
     def save(self, *args, **kwargs):
         if self.is_manager and not self.manager:

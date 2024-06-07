@@ -143,7 +143,6 @@ def manage_employees(request):
         'employees': employees,
         'managers': managers
     })
-
 @login_required
 @user_passes_test(is_admin)
 def delete_employee(request, pk):
@@ -152,7 +151,8 @@ def delete_employee(request, pk):
         employee.delete()
         logger.info(f"Employee {employee.username} deleted")
         return redirect('accounts:manage_employees')
-    return render(request, 'accounts/delete_employee_confirmation.html', {'employee': employee})
+    return render(request, 'accounts/manage_employees.html')
+
 @login_required
 @user_passes_test(is_admin)
 def admin_home(request):
