@@ -3,15 +3,40 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h2>Welcome{{ user.username }}!</h2>
-{% if user.is_employee %}
-    <p><a href="{% url 'reimbursements:submit' %}">Submit Reimbursement Request</a></p>
-{% endif %}
-{% if user.is_manager %}
-    <p><a href="{% url 'reimbursements:list' %}">View Reimbursement Requests</a></p>
-{% endif %}
-{% if user.is_superuser %}
-    <p><a href="{% url 'accounts:manage_departments' %}">Manage Departments</a></p>
-    <p><a href="{% url 'accounts:manage_employees' %}">Manage Employees</a></p>
-{% endif %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Welcome, {{ user.username }}!</h2>
+        </div>
+    </div>
+
+    {% if user.is_employee %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{% url 'reimbursements:submit' %}" class="btn btn-primary">Submit Reimbursement Request</a>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if user.is_manager %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{% url 'reimbursements:list' %}" class="btn btn-primary">View Reimbursement Requests</a>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if user.is_superuser %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{% url 'accounts:manage_departments' %}" class="btn btn-primary">Manage Departments</a>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{% url 'accounts:manage_employees' %}" class="btn btn-primary">Manage Employees</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

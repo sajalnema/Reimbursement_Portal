@@ -3,46 +3,73 @@
 {% block title %}Employee Dashboard{% endblock %}
 
 {% block content %}
-<h2>Welcome, {{ user.username }}!</h2>
-<p>You are logged in as an employee.</p>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Welcome, {{ user.username }}!</h2>
+            <p>You are logged in as an employee.</p>
+        </div>
+    </div>
 
-<div class="card">
-    <h3>Your Manager</h3>
-    {% if manager %}
-        <p>{{ manager.username }}</p>
-    {% else %}
-        <p>No manager assigned for now</p>
-    {% endif %}
-</div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4" id="your-manager">
+                <div class="card-header">
+                    <h3>Your Manager</h3>
+                </div>
+                <div class="card-body">
+                    {% if manager %}
+                        <p>{{ manager.username }}</p>
+                    {% else %}
+                        <p>No manager assigned for now</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="card">
-    <h3>Submit Reimbursement Request</h3>
-    <p><a href="{% url 'reimbursements:submit' %}">Submit Reimbursement Request</a></p>
-</div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4" id="submit-reimbursement">
+                <div class="card-header">
+                    <h3>Submit Reimbursement Request</h3>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'reimbursements:submit' %}" class="btn btn-primary">Submit Reimbursement Request</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="card">
-    <h3>Track Your Reimbursements</h3>
-    {% if reimbursements %}
-        <ul>
-        {% for reimbursement in reimbursements %}
-            <li>
-                <strong>{{ reimbursement.category }}:</strong> 
-                {{ reimbursement.amount }} - 
-                {{ reimbursement.status }} - 
-                <strong>Manager Comments:</strong> {{ reimbursement.manager_comments|default:"No comments" }}
-                <br>
-                <strong>Description:</strong> {{ reimbursement.description|default:"No description" }}
-                <br>
-                <strong>Date:</strong> {{ reimbursement.date }}
-                <br>
-                {% if reimbursement.document %}
-                    <strong>Document:</strong> <a href="{{ reimbursement.document.url }}">View Document</a>
-                {% endif %}
-            </li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>You have not submitted any reimbursement requests yet.</p>
-    {% endif %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4" id="track-reimbursements">
+                <div class="card-header">
+                    <h3>Track Your Reimbursements</h3>
+                </div>
+                <div class="card-body">
+                    {% if reimbursements %}
+                        <ul class="list-group">
+                        {% for reimbursement in reimbursements %}
+                            <li class="list-group-item">
+                                <strong>{{ reimbursement.category }}:</strong> 
+                                {{ reimbursement.amount }} - 
+                                {{ reimbursement.status }}<br>
+                                <strong>Manager Comments:</strong> {{ reimbursement.manager_comments|default:"No comments" }}<br>
+                                <strong>Description:</strong> {{ reimbursement.description|default:"No description" }}<br>
+                                <strong>Date:</strong> {{ reimbursement.date }}<br>
+                                {% if reimbursement.document %}
+                                    <strong>Document:</strong> <a href="{{ reimbursement.document.url }}" class="btn btn-link">View Document</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>You have not submitted any reimbursement requests yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -3,78 +3,100 @@
 {% block title %}Manage Employees{% endblock %}
 
 {% block content %}
-  <h2>Manage Employees</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Add Employee</button>
-  </form>
-
-  {% if form.errors %}
-    <div class="errors">
-      <ul>
-        {% for field, errors in form.errors.items %}
-          <li>{{ field }}: {{ errors|striptags }}</li>
-        {% endfor %}
-      </ul>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Manage Employees</h2>
+        </div>
     </div>
-  {% endif %}
+    <div class="row">
+        <div class="col-12">
+            <form method="post" class="card p-4 mb-4">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Add Employee</button>
+            </form>
+        </div>
+    </div>
 
-  <h3>Existing Employees</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email</th>
-        <th>Department</th>
-        <th>Manager</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for employee in employees %}
-      <tr>
-        <td>{{ employee.username }}</td>
-        <td>{{ employee.first_name }}</td>
-        <td>{{ employee.last_name }}</td>
-        <td>{{ employee.email }}</td>
-        <td>{% if employee.department %}{{ employee.department.name }}{% else %}{% endif %}</td>
-        <td>{% if employee.manager %}{{ employee.manager.username }}{% else %}{% endif %}</td>
-        <td>
-          <a href="{% url 'accounts:delete_employee_confirmation' employee.pk %}">Delete</a>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    {% if form.errors %}
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-danger">
+                    <ul>
+                        {% for field, errors in form.errors.items %}
+                            <li>{{ field }}: {{ errors|striptags }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
-  <h3>Existing Managers</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email</th>
-        <th>Department</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for manager in managers %}
-      <tr>
-        <td>{{ manager.username }}</td>
-        <td>{{ manager.first_name }}</td>
-        <td>{{ manager.last_name }}</td>
-        <td>{{ manager.email }}</td>
-        <td>{% if manager.department %}{{ manager.department.name }}{% else %}{% endif %}</td>
-        <td>
-          <a href="{% url 'accounts:delete_employee_confirmation' manager.pk %}">Delete</a>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <div class="row">
+        <div class="col-12">
+            <h3>Existing Employees</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Manager</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employees %}
+                        <tr>
+                            <td>{{ employee.username }}</td>
+                            <td>{{ employee.first_name }}</td>
+                            <td>{{ employee.last_name }}</td>
+                            <td>{{ employee.email }}</td>
+                            <td>{% if employee.department %}{{ employee.department.name }}{% else %}{% endif %}</td>
+                            <td>{% if employee.manager %}{{ employee.manager.username }}{% else %}{% endif %}</td>
+                            <td>
+                                <a href="{% url 'accounts:delete_employee_confirmation' employee.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <h3>Existing Managers</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for manager in managers %}
+                        <tr>
+                            <td>{{ manager.username }}</td>
+                            <td>{{ manager.first_name }}</td>
+                            <td>{{ manager.last_name }}</td>
+                            <td>{{ manager.email }}</td>
+                            <td>{% if manager.department %}{{ manager.department.name }}{% else %}{% endif %}</td>
+                            <td>
+                                <a href="{% url 'accounts:delete_employee_confirmation' manager.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}

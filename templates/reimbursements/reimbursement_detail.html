@@ -1,28 +1,32 @@
-<!-- reimbursements/reimbursement_detail.html -->
-
 {% extends 'base.html' %}
 
 {% block title %}Reimbursement Details{% endblock %}
 
 {% block content %}
-<h2>Reimbursement Details</h2>
-<p><strong>Employee:</strong> {{ reimbursement.employee.username }}</p>
-<p><strong>Category:</strong> {{ reimbursement.category }}</p>
-<p><strong>Amount:</strong> {{ reimbursement.amount }}</p>
-<p><strong>Description:</strong> {{ reimbursement.description }}</p>
-<p><strong>Status:</strong> {{ reimbursement.status }}</p>
-<p><strong>Created At:</strong> {{ reimbursement.created_at }}</p>
-<p><strong>Updated At:</strong> {{ reimbursement.updated_at }}</p>
-<p><strong>Date:</strong> {{ reimbursement.date|date:"F j, Y" }}</p>
-<p>
-    <strong>Document:</strong>
-    {% if reimbursement.document %}
-        <a href="{{ reimbursement.document.url }}">View Document</a>
-    {% else %}
-        No document uploaded.
-    {% endif %}
-</p>
-<p>
-    <a href="{% url 'reimbursements:list' %}">Reimbursement List</a>
-</p>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Reimbursement Details</h2>
+            <p><strong>Employee:</strong> {{ reimbursement.employee.username }}</p>
+            <p><strong>Category:</strong> {{ reimbursement.category }}</p>
+            <p><strong>Amount:</strong> {{ reimbursement.amount }}</p>
+            <p><strong>Description:</strong> {{ reimbursement.description }}</p>
+            <p><strong>Status:</strong> {{ reimbursement.status }}</p>
+            <p><strong>Created At:</strong> {{ reimbursement.created_at }}</p>
+            <p><strong>Updated At:</strong> {{ reimbursement.updated_at }}</p>
+            <p><strong>Date:</strong> {{ reimbursement.date|date:"F j, Y" }}</p>
+            <p>
+                <strong>Document:</strong>
+                {% if reimbursement.document %}
+                    <a href="{{ reimbursement.document.url }}" class="btn btn-link">View Document</a>
+                {% else %}
+                    No document uploaded.
+                {% endif %}
+            </p>
+            <p>
+                <a href="{% url 'reimbursements:list' %}" class="btn btn-secondary">Back to Reimbursement List</a>
+            </p>
+        </div>
+    </div>
+</div>
 {% endblock %}

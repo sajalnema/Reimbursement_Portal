@@ -3,36 +3,51 @@
 {% block title %}Approve/Decline Reimbursement{% endblock %}
 
 {% block content %}
-<h2>Reimbursement Request</h2>
-<p><strong>Employee:</strong> {{ reimbursement.employee.username }}</p>
-<p><strong>Category:</strong> {{ reimbursement.category }}</p>
-<p><strong>Amount:</strong> {{ reimbursement.amount }}</p>
-<p><strong>Description:</strong> {{ reimbursement.description }}</p>
-<p><strong>Status:</strong> {{ reimbursement.status }}</p>
-<p><strong>Created At:</strong> {{ reimbursement.created_at }}</p>
-<p><strong>Updated At:</strong> {{ reimbursement.updated_at }}</p>
-<p>Date: {{ reimbursement.date }}</p>  <!-- #addedthis -->
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Reimbursement Request</h2>
+        </div>
+    </div>
 
-<p>
-    <strong>Document:</strong>
-    {% if reimbursement.document %}
-        <a href="{{ reimbursement.document.url }}">View Document</a>
-    {% else %}
-        No document uploaded.
-    {% endif %}
-</p>
+    <div class="row">
+        <div class="col-12">
+            <p><strong>Employee:</strong> {{ reimbursement.employee.username }}</p>
+            <p><strong>Category:</strong> {{ reimbursement.category }}</p>
+            <p><strong>Amount:</strong> {{ reimbursement.amount }}</p>
+            <p><strong>Description:</strong> {{ reimbursement.description }}</p>
+            <p><strong>Status:</strong> {{ reimbursement.status }}</p>
+            <p><strong>Created At:</strong> {{ reimbursement.created_at }}</p>
+            <p><strong>Updated At:</strong> {{ reimbursement.updated_at }}</p>
+            <p><strong>Date:</strong> {{ reimbursement.date }}</p>
 
-<form method="post">
-    {% csrf_token %}
-    <label for="manager_comments">Manager Comments:</label>
-    <textarea id="manager_comments" name="manager_comments">{{ reimbursement.manager_comments }}</textarea>
-    <br>
-    <label for="date">Date:</label>
-    <input type="date" id="date" name="date" value="{{ reimbursement.date|date:'Y-m-d' }}">
-    <br>
-    <button type="submit" name="action" value="approve">Approve</button>
-    <button type="submit" name="action" value="decline">Decline</button>
-</form>
+            <p>
+                <strong>Document:</strong>
+                {% if reimbursement.document %}
+                    <a href="{{ reimbursement.document.url }}" class="btn btn-link">View Document</a>
+                {% else %}
+                    No document uploaded.
+                {% endif %}
+            </p>
 
-<p><a href="{% url 'reimbursements:list' %}">Back to List</a></p>
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="manager_comments">Manager Comments:</label>
+                    <textarea id="manager_comments" name="manager_comments" class="form-control">{{ reimbursement.manager_comments }}</textarea>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" name="date" value="{{ reimbursement.date|date:'Y-m-d' }}" class="form-control">
+                </div>
+                <div class="mt-3">
+                    <button type="submit" name="action" value="approve" class="btn btn-success">Approve</button>
+                    <button type="submit" name="action" value="decline" class="btn btn-danger">Decline</button>
+                </div>
+            </form>
+
+            <p class="mt-4"><a href="{% url 'reimbursements:list' %}" class="btn btn-secondary">Back to List</a></p>
+        </div>
+    </div>
+</div>
 {% endblock %}

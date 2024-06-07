@@ -3,80 +3,167 @@
 {% block title %}Manager Dashboard{% endblock %}
 
 {% block content %}
-<h2>Welcome, {{ user.username }}!</h2>
-<p>You are logged in as a manager.</p>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Welcome, {{ user.username }}!</h2>
+            <p>You are logged in as a manager.</p>
+        </div>
+    </div>
 
-<div class="card">
-    <h3>Employees Managed by You</h3>
-    {% if managed_employees %}
-        <ul>
-        {% for employee in managed_employees %}
-            <li>{{ employee.username }} - {{ employee.first_name }} {{ employee.last_name }}</li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>You are not managing any employees currently.</p>
-    {% endif %}
-</div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Reimbursements</h5>
+                    <p class="card-text">{{ total_reimbursements }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Approved</h5>
+                    <p class="card-text">{{ approved_reimbursements }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Declined</h5>
+                    <p class="card-text">{{ declined_reimbursements }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Pending</h5>
+                    <p class="card-text">{{ pending_reimbursements }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div class="card">
-    <h3>Track Reimbursements</h3>
-    {% if employee_reimbursements %}
-        <h4>Your Employees' Reimbursements</h4>
-        <ul>
-        {% for reimbursement in employee_reimbursements %}
-            <li>
-                <strong>{{ reimbursement.category }}:</strong> 
-                {{ reimbursement.amount }} - 
-                {{ reimbursement.status }} -
-                <a href="{% url 'reimbursements:detail' reimbursement.pk %}">View Details</a> -
-                {% if reimbursement.status == 'pending' %}
-                    <form method="post" action="{% url 'reimbursements:approve' reimbursement.pk %}" style="display:inline;">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Employees Managed by You</h3>
+                </div>
+                <div class="card-body">
+                    {% if managed_employees %}
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Reimbursement Requests</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for employee in managed_employees %}
+                                    <tr>
+                                        <td>{{ employee.username }}</td>
+                                        <td>{{ employee.first_name }}</td>
+                                        <td>{{ employee.last_name }}</td>
+                                        <td>{{ employee.reimbursements.count }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>You are not managing any employees currently.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Track Reimbursements</h3>
+                </div>
+                <div class="card-body">
+                    {% if employee_reimbursements %}
+                        <h4>Your Employees' Reimbursements</h4>
+                        <ul class="list-group">
+                        {% for reimbursement in employee_reimbursements %}
+                            <li class="list-group-item">
+                                <strong>{{ reimbursement.category }}:</strong> 
+                                {{ reimbursement.amount }} - 
+                                {{ reimbursement.status }} -
+                                <strong>Employee:</strong> {{ reimbursement.employee.username }} -
+                                <a href="{% url 'reimbursements:detail' reimbursement.pk %}" class="btn btn-link">View Details</a> -
+                                {% if reimbursement.status == 'pending' %}
+                                    <form method="post" action="{% url 'reimbursements:approve' reimbursement.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="approve">
+                                        <textarea name="manager_comments" placeholder="Add comments" class="form-control mb-2"></textarea>
+                                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                    </form>
+                                    <form method="post" action="{% url 'reimbursements:decline' reimbursement.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="decline">
+                                        <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+                                    </form>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No reimbursement requests from your employees.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Your Reimbursements</h3>
+                </div>
+                <div class="card-body">
+                    {% if manager_reimbursements %}
+                        <ul class="list-group">
+                        {% for reimbursement in manager_reimbursements %}
+                            <li class="list-group-item">
+                                <strong>{{ reimbursement.category }}:</strong> 
+                                {{ reimbursement.amount }} - 
+                                {{ reimbursement.status }} -
+                                <a href="{% url 'reimbursements:detail' reimbursement.pk %}" class="btn btn-link">View Details</a>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>You have not submitted any reimbursement requests yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Submit Reimbursement Request</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <input type="hidden" name="action" value="approve">
-                        <textarea name="manager_comments" placeholder="Add comments"></textarea>
-                        <button type="submit">Approve</button>
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
-                    <form method="post" action="{% url 'reimbursements:decline' reimbursement.pk %}" style="display:inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="decline">
-                        
-                        <button type="submit">Decline</button>
-                    </form>
-                {% endif %}
-            </li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>No reimbursement requests from your employees.</p>
-    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-<div class="card">
-    <h3>Your Reimbursements</h3>
-    {% if manager_reimbursements %}
-        <ul>
-        {% for reimbursement in manager_reimbursements %}
-            <li>
-                <strong>{{ reimbursement.category }}:</strong> 
-                {{ reimbursement.amount }} - 
-                {{ reimbursement.status }} -
-                <a href="{% url 'reimbursements:detail' reimbursement.pk %}">View Details</a>
-            </li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>You have not submitted any reimbursement requests yet.</p>
-    {% endif %}
-</div>
-
-<div class="card">
-    <h3>Submit Reimbursement Request</h3>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
-</div>
-
 {% endblock %}

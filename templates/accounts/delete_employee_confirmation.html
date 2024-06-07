@@ -3,11 +3,23 @@
 {% block title %}Delete Employee{% endblock %}
 
 {% block content %}
-  <h2>Delete Employee</h2>
-  <p>Are you sure you want to delete {{ employee.username }}?</p>
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit">Confirm</button>
-    <a href="{% url 'accounts:manage_employees' %}">Cancel</a>
-  </form>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Delete Employee</h2>
+            <p>Are you sure you want to delete {{ employee.username }}?</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <form method="post" class="card p-4">
+                {% csrf_token %}
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-danger">Confirm</button>
+                    <a href="{% url 'accounts:manage_employees' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

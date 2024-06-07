@@ -148,10 +148,12 @@ def manage_employees(request):
 def delete_employee(request, pk):
     employee = get_object_or_404(CustomUser, pk=pk)
     if request.method == 'POST':
+        Reimbursement.objects.filter(employee=employee).delete()
+
         employee.delete()
         logger.info(f"Employee {employee.username} deleted")
         return redirect('accounts:manage_employees')
-    return render(request, 'accounts/manage_employees.html')
+    return render(request, 'accounts/delete_employee_confirmation.html', {'employee': employee})
 
 @login_required
 @user_passes_test(is_admin)
@@ -178,11 +180,21 @@ def admin_home(request):
         )
         logger.info(f"Search query '{search_query}' applied")
 
+    # Calculate reimbursement counts
+    total_reimbursements = reimbursements.count()
+    approved_reimbursements = reimbursements.filter(status='approved').count()
+    declined_reimbursements = reimbursements.filter(status='declined').count()
+    pending_reimbursements = reimbursements.filter(status='pending').count()
+
     return render(request, 'accounts/admin_home.html', {
         'employees': employees,
         'managers': managers,
         'reimbursements': reimbursements,
-        'search_query': search_query
+        'search_query': search_query,
+        'total_reimbursements': total_reimbursements,
+        'approved_reimbursements': approved_reimbursements,
+        'declined_reimbursements': declined_reimbursements,
+        'pending_reimbursements': pending_reimbursements,
     })
 
 
@@ -203,11 +215,22 @@ def manager_home(request):
     else:
         form = ReimbursementForm()
 
+      # Calculate reimbursement counts
+    total_reimbursements = employee_reimbursements.count()
+    approved_reimbursements = employee_reimbursements.filter(status='approved').count()
+    declined_reimbursements = employee_reimbursements.filter(status='declined').count()
+    pending_reimbursements = employee_reimbursements.filter(status='pending').count()
+
+
     return render(request, 'accounts/manager_home.html', {
         'managed_employees': managed_employees,
         'employee_reimbursements': employee_reimbursements,
         'manager_reimbursements': manager_reimbursements,
-        'form': form
+        'form': form,
+        'total_reimbursements': total_reimbursements,
+        'approved_reimbursements': approved_reimbursements,
+        'declined_reimbursements': declined_reimbursements,
+        'pending_reimbursements': pending_reimbursements,
     })
 
 @login_required

@@ -3,53 +3,101 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %}Reimbursement Portal{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <body>
-    <header>
-        <h1>
-            <a href="{% url 'accounts:home_redirect' %}" style="color: inherit; text-decoration: none;">
-                Reimbursement Portal
-            </a>
-        </h1>
-        <nav>
-            <ul>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <a class="navbar-brand" href="{% url 'accounts:home_redirect' %}">Reimbursement Portal</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
                     {% if user.is_superuser %}
-                        <li><a href="{% url 'accounts:manage_departments' %}">Manage Departments</a></li>
-                        <li><a href="{% url 'accounts:manage_employees' %}">Manage Employees</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:manage_departments' %}">Manage Departments</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:manage_employees' %}">Manage Employees</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#track-reimbursements">Track All Reimbursements</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#search-assign">Search and Assign Manager</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#employee-manager-assignments">Employee Manager Assignments</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#change-role">Change Employee to Manager</a></li>
                     {% endif %}
                     {% if user.is_manager %}
-                        <li><a href="{% url 'reimbursements:list' %}">Reimbursement List</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#managed-employees">Employees Managed by You</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#track-reimbursements">Track Reimbursements</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#your-reimbursements">Your Reimbursements</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#submit-reimbursement">Submit Reimbursement Request</a></li>
                     {% endif %}
                     {% if user.is_employee %}
-                        <li><a href="{% url 'reimbursements:submit' %}">Submit Reimbursement</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#your-manager">Your Manager</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#submit-reimbursement">Submit Reimbursement Request</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#track-reimbursements">Track Your Reimbursements</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'reimbursements:list' %}">Reimbursement List</a></li>
                     {% endif %}
-                    <li class="nav-right">
-                        <a href="{% url 'accounts:home_redirect' %}"><i class="fas fa-home"></i> Home</a>
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:home_redirect' %}"><i class="fas fa-home"></i> Home</a>
                     </li>
-                    <li class="nav-right">
+                    <li class="nav-item">
                         <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
                             {% csrf_token %}
-                            <button type="submit" style="background: none; border: none; color: #000000; cursor: pointer;">
-                                <li class="fas fa-sign-out-alt"></li> Logout
+                            <button type="submit" class="btn btn-link nav-link" style="padding: 0;">
+                                <i class="fas fa-sign-out-alt"></i> Logout
                             </button>
                         </form>
                     </li>
                 {% else %}
-                    <li><a href="{% url 'accounts:login' %}">Login</a></li>
-                    <li><a href="{% url 'accounts:signup' %}">Sign Up</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:signup' %}">Sign Up</a></li>
                 {% endif %}
             </ul>
-        </nav>
-    </header>
-    <main>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
         {% block content %}{% endblock %}
-    </main>
-    <footer>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" title="Go to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer class="footer bg-light text-center py-3 mt-4">
         <p>&copy; 2024 Reimbursement Portal</p>
     </footer>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Back to Top button
+            var backToTopButton = document.getElementById("back-to-top");
+
+            window.onscroll = function() {
+                if (document.body.scrollTop > window.innerHeight / 2 || document.documentElement.scrollTop > window.innerHeight / 2) {
+                    backToTopButton.style.display = "block";
+                } else {
+                    backToTopButton.style.display = "none";
+                }
+            };
+
+            backToTopButton.addEventListener("click", function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
 </body>
 </html>

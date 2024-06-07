@@ -1,24 +1,46 @@
-<!-- templates/accounts/manager_dashboard.html -->
-
 {% extends 'base.html' %}
 
 {% block title %}Manager Dashboard{% endblock %}
 
 {% block content %}
-<h2>Manager Dashboard</h2>
-<h3>Employees managed by {{ manager.username }}</h3>
-<div class="employee-cards">
-  {% for employee in employees %}
-    <div class="card">
-      <p><strong>Name:</strong> {{ employee.username }}</p>
-      <p><strong>Email:</strong> {{ employee.email }}</p>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Manager Dashboard</h2>
+            <h3>Employees managed by {{ manager.username }}</h3>
+        </div>
     </div>
-  {% endfor %}
-</div>
 
-<div class="card">
-  <h3>View Detailed List of Managed Employees</h3>
-  <p><a href="{% url 'accounts:manager_employees' %}">View Managed Employees</a></p>
-</div>
+    <div class="row">
+        <div class="col-12">
+            <div class="employee-cards">
+                <div class="row">
+                    {% for employee in employees %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <p><strong>Name:</strong> {{ employee.username }}</p>
+                                    <p><strong>Email:</strong> {{ employee.email }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>View Detailed List of Managed Employees</h3>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'accounts:manager_employees' %}" class="btn btn-primary">View Managed Employees</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

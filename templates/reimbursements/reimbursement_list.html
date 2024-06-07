@@ -3,55 +3,64 @@
 {% block title %}Reimbursement List{% endblock %}
 
 {% block content %}
-<h2>Reimbursement List</h2>
-<table>
-    <tr>
-        <th>Title</th>
-        <th>Amount</th>
-        <th>Status</th>
-        <th>Manager Comments</th>
-        <th>Actions</th>
-    </tr>
-    {% for reimbursement in reimbursements %}
-    <tr>
-        <td>{{ reimbursement.category }}</td>
-        <td>{{ reimbursement.amount }}</td>
-        <td>{{ reimbursement.status }}</td>
-        <td>{{ reimbursement.manager_comments }}</td>
-        <td>
-            <a href="{% url 'reimbursements:detail' reimbursement.pk %}">View Details</a>
-            {% if reimbursement.status == 'pending' %}
-                {% if user.is_superuser %}
-                    <form method="post" action="{% url 'reimbursements:approve' reimbursement.pk %}" style="display: inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="approve">
-                        <textarea name="manager_comments" placeholder="Add comments"></textarea>
-                        <button type="submit">Approve</button>
-                    </form>
-                    <form method="post" action="{% url 'reimbursements:decline' reimbursement.pk %}" style="display: inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="decline">
-                        <button type="submit">Decline</button>
-                    </form>
-                {% elif user.is_manager and reimbursement.employee.manager == user %}
-                   
-                    <form method="post" action="{% url 'reimbursements:approve' reimbursement.pk %}" style="display: inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="approve">
-                        <textarea name="manager_comments" placeholder="Add comments"></textarea>
-                        <button type="submit">Approve</button>
-                    </form>
-                    <form method="post" action="{% url 'reimbursements:decline' reimbursement.pk %}" style="display: inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="decline">
-                        <button type="submit">Decline</button>
-                    </form>
-                {% else %}
-                    <p>Access Denied</p>
-                {% endif %}
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Reimbursement List</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Manager Comments</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reimbursement in reimbursements %}
+                    <tr>
+                        <td>{{ reimbursement.category }}</td>
+                        <td>{{ reimbursement.amount }}</td>
+                        <td>{{ reimbursement.status }}</td>
+                        <td>{{ reimbursement.manager_comments }}</td>
+                        <td>
+                            <a href="{% url 'reimbursements:detail' reimbursement.pk %}" class="btn btn-link">View Details</a>
+                            {% if reimbursement.status == 'pending' %}
+                                {% if user.is_superuser %}
+                                    <form method="post" action="{% url 'reimbursements:approve' reimbursement.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="approve">
+                                        <textarea name="manager_comments" placeholder="Add comments" class="form-control mb-2"></textarea>
+                                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                    </form>
+                                    <form method="post" action="{% url 'reimbursements:decline' reimbursement.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="decline">
+                                        <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+                                    </form>
+                                {% elif user.is_manager and reimbursement.employee.manager == user %}
+                                    <form method="post" action="{% url 'reimbursements:approve' reimbursement.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="approve">
+                                        <textarea name="manager_comments" placeholder="Add comments" class="form-control mb-2"></textarea>
+                                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                    </form>
+                                    <form method="post" action="{% url 'reimbursements:decline' reimbursement.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="decline">
+                                        <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+                                    </form>
+                                {% else %}
+                                    <p class="text-danger">Access Denied</p>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}

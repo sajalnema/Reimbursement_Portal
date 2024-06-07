@@ -3,7 +3,58 @@
 {% block title %}Employee Dashboard{% endblock %}
 
 {% block content %}
-<h2>Welcome, {{ user.username }}!</h2>
+<h2>Welcome, {{ user.username }}!</h2>{% extends 'base.html' %}
+
+{% block title %}Employee Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Welcome, {{ user.username }}!</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Submit Your Reimbursement Request</h3>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'reimbursements:submit' %}" class="btn btn-primary">Submit Reimbursement</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Track Your Reimbursements</h3>
+                </div>
+                <div class="card-body">
+                    {% if reimbursements %}
+                        <ul class="list-group">
+                        {% for reimbursement in reimbursements %}
+                            <li class="list-group-item">
+                                <strong>{{ reimbursement.category }}:</strong> 
+                                {{ reimbursement.amount }} - 
+                                {{ reimbursement.status }}
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>You have not submitted any reimbursement requests yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
 
 <div class="card">
     <h3>Submit Your Reimbursement Request</h3>
