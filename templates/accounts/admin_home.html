@@ -64,6 +64,8 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <h3>Manage Employees</h3>
+                    <p>Total Employees: {{ employees.count }}</p> 
+                    <p>Total Managers: {{ managers.count }}</p> 
                 </div>
                 <div class="card-body">
                     <a href="{% url 'accounts:manage_employees' %}" class="btn btn-primary">Manage Employees</a>
@@ -80,29 +82,48 @@
                 </div>
                 <div class="card-body">
                     {% if reimbursements %}
-                        <ul class="list-group">
-                        {% for reimbursement in reimbursements %}
-                            <li class="list-group-item">
-                                <strong>{{ reimbursement.category }}:</strong> 
-                                {{ reimbursement.amount }} - 
-                                {{ reimbursement.status }} -
-                                <a href="{% url 'reimbursements:detail' reimbursement.pk %}" class="btn btn-link">View Details</a> -
-                                {% if reimbursement.status == 'pending' %}
-                                    <form method="post" action="{% url 'reimbursements:approve' reimbursement.pk %}" class="d-inline">
-                                        {% csrf_token %}
-                                        <textarea name="manager_comments" placeholder="Add comments" class="form-control mb-2"></textarea>
-                                        <input type="hidden" name="action" value="approve">
-                                        <button type="submit" class="btn btn-success">Approve</button>
-                                    </form>
-                                    <form method="post" action="{% url 'reimbursements:decline' reimbursement.pk %}" class="d-inline">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="action" value="decline">
-                                        <button type="submit" class="btn btn-danger">Decline</button>
-                                    </form>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                        </ul>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Employee</th>
+                                    <th>Details</th>
+                                    <th>Comments</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reimbursement in reimbursements %}
+                                    <tr>
+                                        <td>{{ reimbursement.category }}</td>
+                                        <td>{{ reimbursement.amount }}</td>
+                                        <td>{{ reimbursement.status }}</td>
+                                        <td>{{ reimbursement.employee.username }}</td>
+                                        <td>
+                                            <a href="{% url 'reimbursements:detail' reimbursement.pk %}" class="btn btn-link">View Details</a>
+                                        </td>
+                                        <td>{{ reimbursement.manager_comments|default:"No comments" }}</td>
+                                        <td>
+                                            {% if reimbursement.status == 'pending' %}
+                                                <form method="post" action="{% url 'reimbursements:approve' reimbursement.pk %}" class="d-inline">
+                                                    {% csrf_token %}
+                                                    <textarea name="manager_comments" placeholder="Add comments" class="form-control mb-2"></textarea>
+                                                    <input type="hidden" name="action" value="approve">
+                                                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                                </form>
+                                                <form method="post" action="{% url 'reimbursements:decline' reimbursement.pk %}" class="d-inline">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="decline">
+                                                    <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+                                                </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     {% else %}
                         <p>No reimbursement requests submitted yet.</p>
                     {% endif %}
