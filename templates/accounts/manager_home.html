@@ -1,6 +1,6 @@
-{% load custom_filters %}
-
 {% extends 'base.html' %}
+
+{% load custom_filters %}
 
 {% block title %}Manager Dashboard{% endblock %}
 
@@ -26,7 +26,7 @@
             <div class="card text-white bg-success mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Approved</h5>
-                    <p class="card-text">{{ employee_reimbursements|filter_by_status:"approved"|count }}</p>
+                    <p class="card-text">{{ employee_reimbursements|filter_by_status:"approved"|count_items }}</p>
                 </div>
             </div>
         </div>
@@ -34,7 +34,7 @@
             <div class="card text-white bg-danger mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Declined</h5>
-                    <p class="card-text">{{ employee_reimbursements|filter_by_status:"declined"|count }}</p>
+                    <p class="card-text">{{ employee_reimbursements|filter_by_status:"declined"|count_items }}</p>
                 </div>
             </div>
         </div>
@@ -42,7 +42,7 @@
             <div class="card text-white bg-warning mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Pending</h5>
-                    <p class="card-text">{{ employee_reimbursements|filter_by_status:"pending"|count }}</p>
+                    <p class="card-text">{{ employee_reimbursements|filter_by_status:"pending"|count_items }}</p>
                 </div>
             </div>
         </div>
