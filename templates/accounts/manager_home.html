@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
-
 {% load custom_filters %}
+
+
 
 {% block title %}Manager Dashboard{% endblock %}
 
@@ -18,7 +19,7 @@
             <div class="card text-white bg-primary mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Total Reimbursements</h5>
-                    <p class="card-text">{{ employee_reimbursements.count }}</p>
+                    <p class="card-text">{{ total_reimbursements }}</p>
                 </div>
             </div>
         </div>
@@ -26,7 +27,7 @@
             <div class="card text-white bg-success mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Approved</h5>
-                    <p class="card-text">{{ employee_reimbursements|filter_by_status:"approved"|count_items }}</p>
+                    <p class="card-text">{{ approved_reimbursements }}</p>
                 </div>
             </div>
         </div>
@@ -34,7 +35,7 @@
             <div class="card text-white bg-danger mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Declined</h5>
-                    <p class="card-text">{{ employee_reimbursements|filter_by_status:"declined"|count_items }}</p>
+                    <p class="card-text">{{ declined_reimbursements }}</p>
                 </div>
             </div>
         </div>
@@ -42,13 +43,13 @@
             <div class="card text-white bg-warning mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Pending</h5>
-                    <p class="card-text">{{ employee_reimbursements|filter_by_status:"pending"|count_items }}</p>
+                    <p class="card-text">{{ pending_reimbursements }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
+    <div id="managed-employees" class="row">
         <div class="col-12">
             <div class="card mb-4">
                 <div class="card-header">
@@ -84,7 +85,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div id="track-reimbursements" class="row">
         <div class="col-12">
             <div class="card mb-4">
                 <div class="card-header">
@@ -143,7 +144,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div id="your-reimbursements" class="row">
         <div class="col-12">
             <div class="card mb-4">
                 <div class="card-header">
@@ -151,17 +152,30 @@
                 </div>
                 <div class="card-body">
                     {% if manager_reimbursements %}
-                        <ul class="list-group">
-                        {% for reimbursement in manager_reimbursements %}
-                            <li class="list-group-item">
-                                <strong>{{ reimbursement.category }}:</strong> 
-                                {{ reimbursement.amount }} - 
-                                {{ reimbursement.status }} -
-                                <a href="{% url 'reimbursements:detail' reimbursement.pk %}" class="btn btn-link">View Details</a>
-                                <strong>Manager Comments:</strong> {{ reimbursement.manager_comments|default:"No comments" }}
-                            </li>
-                        {% endfor %}
-                        </ul>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Details</th>
+                                    <th>Comments</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reimbursement in manager_reimbursements %}
+                                    <tr>
+                                        <td>{{ reimbursement.category }}</td>
+                                        <td>{{ reimbursement.amount }}</td>
+                                        <td>{{ reimbursement.status }}</td>
+                                        <td>
+                                            <a href="{% url 'reimbursements:detail' reimbursement.pk %}" class="btn btn-link">View Details</a>
+                                        </td>
+                                        <td>{{ reimbursement.manager_comments|default:"No comments" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     {% else %}
                         <p>You have not submitted any reimbursement requests yet.</p>
                     {% endif %}
@@ -170,7 +184,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div id="submit-reimbursement" class="row">
         <div class="col-12">
             <div class="card mb-4">
                 <div class="card-header">
