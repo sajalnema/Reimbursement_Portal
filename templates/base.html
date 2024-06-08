@@ -20,8 +20,8 @@
             <ul class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
                     {% if user.is_superuser %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:manage_departments' %}">Manage Departments</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:manage_employees' %}">Manage Employees</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#manage-departments">Manage Departments</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#manage-employees">Manage Employees</a></li>
                         <li class="nav-item"><a class="nav-link" href="#track-reimbursements">Track All Reimbursements</a></li>
                         <li class="nav-item"><a class="nav-link" href="#search-assign">Search and Assign Manager</a></li>
                         <li class="nav-item"><a class="nav-link" href="#employee-manager-assignments">Employee Manager Assignments</a></li>
@@ -63,7 +63,7 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="container mt-4">
+    <div class="container mt-4" style="margin-top: 80px;">
         {% block content %}{% endblock %}
     </div>
 
@@ -96,6 +96,16 @@
 
             backToTopButton.addEventListener("click", function() {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // Smooth scroll for navbar links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
             });
         });
     </script>

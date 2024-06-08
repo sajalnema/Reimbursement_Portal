@@ -1,3 +1,5 @@
+{% load custom_filters %}
+
 {% extends 'base.html' %}
 
 {% block title %}Manager Dashboard{% endblock %}
@@ -16,7 +18,7 @@
             <div class="card text-white bg-primary mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Total Reimbursements</h5>
-                    <p class="card-text">{{ total_reimbursements }}</p>
+                    <p class="card-text">{{ employee_reimbursements.count }}</p>
                 </div>
             </div>
         </div>
@@ -24,7 +26,7 @@
             <div class="card text-white bg-success mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Approved</h5>
-                    <p class="card-text">{{ approved_reimbursements }}</p>
+                    <p class="card-text">{{ employee_reimbursements|filter_by_status:"approved"|count }}</p>
                 </div>
             </div>
         </div>
@@ -32,7 +34,7 @@
             <div class="card text-white bg-danger mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Declined</h5>
-                    <p class="card-text">{{ declined_reimbursements }}</p>
+                    <p class="card-text">{{ employee_reimbursements|filter_by_status:"declined"|count }}</p>
                 </div>
             </div>
         </div>
@@ -40,7 +42,7 @@
             <div class="card text-white bg-warning mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Pending</h5>
-                    <p class="card-text">{{ pending_reimbursements }}</p>
+                    <p class="card-text">{{ employee_reimbursements|filter_by_status:"pending"|count }}</p>
                 </div>
             </div>
         </div>
@@ -91,30 +93,48 @@
                 <div class="card-body">
                     {% if employee_reimbursements %}
                         <h4>Your Employees' Reimbursements</h4>
-                        <ul class="list-group">
-                        {% for reimbursement in employee_reimbursements %}
-                            <li class="list-group-item">
-                                <strong>{{ reimbursement.category }}:</strong> 
-                                {{ reimbursement.amount }} - 
-                                {{ reimbursement.status }} -
-                                <strong>Employee:</strong> {{ reimbursement.employee.username }} -
-                                <a href="{% url 'reimbursements:detail' reimbursement.pk %}" class="btn btn-link">View Details</a> -
-                                {% if reimbursement.status == 'pending' %}
-                                    <form method="post" action="{% url 'reimbursements:approve' reimbursement.pk %}" class="d-inline">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="action" value="approve">
-                                        <textarea name="manager_comments" placeholder="Add comments" class="form-control mb-2"></textarea>
-                                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
-                                    </form>
-                                    <form method="post" action="{% url 'reimbursements:decline' reimbursement.pk %}" class="d-inline">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="action" value="decline">
-                                        <button type="submit" class="btn btn-danger btn-sm">Decline</button>
-                                    </form>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                        </ul>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Employee</th>
+                                    <th>Details</th>
+                                    <th>Comments</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reimbursement in employee_reimbursements %}
+                                    <tr>
+                                        <td>{{ reimbursement.category }}</td>
+                                        <td>{{ reimbursement.amount }}</td>
+                                        <td>{{ reimbursement.status }}</td>
+                                        <td>{{ reimbursement.employee.username }}</td>
+                                        <td>
+                                            <a href="{% url 'reimbursements:detail' reimbursement.pk %}" class="btn btn-link">View Details</a>
+                                        </td>
+                                        <td>{{ reimbursement.manager_comments|default:"No comments" }}</td>
+                                        <td>
+                                            {% if reimbursement.status == 'pending' %}
+                                                <form method="post" action="{% url 'reimbursements:approve' reimbursement.pk %}" class="d-inline">
+                                                    {% csrf_token %}
+                                                    <textarea name="manager_comments" placeholder="Add comments" class="form-control mb-2"></textarea>
+                                                    <input type="hidden" name="action" value="approve">
+                                                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                                </form>
+                                                <form method="post" action="{% url 'reimbursements:decline' reimbursement.pk %}" class="d-inline">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="decline">
+                                                    <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+                                                </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     {% else %}
                         <p>No reimbursement requests from your employees.</p>
                     {% endif %}
@@ -138,6 +158,7 @@
                                 {{ reimbursement.amount }} - 
                                 {{ reimbursement.status }} -
                                 <a href="{% url 'reimbursements:detail' reimbursement.pk %}" class="btn btn-link">View Details</a>
+                                <strong>Manager Comments:</strong> {{ reimbursement.manager_comments|default:"No comments" }}
                             </li>
                         {% endfor %}
                         </ul>

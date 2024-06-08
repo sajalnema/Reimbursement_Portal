@@ -12,8 +12,43 @@
     </div>
 
     <div class="row">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Reimbursements</h5>
+                    <p class="card-text">{{ total_reimbursements }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Approved</h5>
+                    <p class="card-text">{{ approved_reimbursements }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Declined</h5>
+                    <p class="card-text">{{ declined_reimbursements }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Pending</h5>
+                    <p class="card-text">{{ pending_reimbursements }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="your-manager" class="row">
         <div class="col-12">
-            <div class="card mb-4" id="your-manager">
+            <div class="card mb-4">
                 <div class="card-header">
                     <h3>Your Manager</h3>
                 </div>
@@ -28,9 +63,9 @@
         </div>
     </div>
 
-    <div class="row">
+    <div id="submit-reimbursement" class="row">
         <div class="col-12">
-            <div class="card mb-4" id="submit-reimbursement">
+            <div class="card mb-4">
                 <div class="card-header">
                     <h3>Submit Reimbursement Request</h3>
                 </div>
@@ -41,9 +76,9 @@
         </div>
     </div>
 
-    <div class="row">
+    <div id="track-reimbursements" class="row">
         <div class="col-12">
-            <div class="card mb-4" id="track-reimbursements">
+            <div class="card mb-4">
                 <div class="card-header">
                     <h3>Track Your Reimbursements</h3>
                 </div>
@@ -55,12 +90,14 @@
                                 <strong>{{ reimbursement.category }}:</strong> 
                                 {{ reimbursement.amount }} - 
                                 {{ reimbursement.status }}<br>
-                                <strong>Manager Comments:</strong> {{ reimbursement.manager_comments|default:"No comments" }}<br>
+                                <strong>Manager Comments:</strong> 
+                                <textarea class="form-control" readonly>{{ reimbursement.manager_comments|default:"No comments" }}</textarea><br>
                                 <strong>Description:</strong> {{ reimbursement.description|default:"No description" }}<br>
                                 <strong>Date:</strong> {{ reimbursement.date }}<br>
                                 {% if reimbursement.document %}
                                     <strong>Document:</strong> <a href="{{ reimbursement.document.url }}" class="btn btn-link">View Document</a>
                                 {% endif %}
+                                <a href="{% url 'reimbursements:detail' reimbursement.pk %}" class="btn btn-link">View Details</a>
                             </li>
                         {% endfor %}
                         </ul>

@@ -204,6 +204,11 @@ def manager_home(request):
     managed_employees = CustomUser.objects.filter(manager=request.user)
     employee_reimbursements = Reimbursement.objects.filter(employee__in=managed_employees)
     manager_reimbursements = Reimbursement.objects.filter(employee=request.user)
+    # Calculate reimbursement counts
+    total_reimbursements = employee_reimbursements.count()
+    approved_reimbursements = employee_reimbursements.filter(status='approved').count()
+    declined_reimbursements = employee_reimbursements.filter(status='declined').count()
+    pending_reimbursements = employee_reimbursements.filter(status='pending').count()
 
     if request.method == 'POST':
         form = ReimbursementForm(request.POST, request.FILES)
@@ -215,13 +220,7 @@ def manager_home(request):
     else:
         form = ReimbursementForm()
 
-      # Calculate reimbursement counts
-    total_reimbursements = employee_reimbursements.count()
-    approved_reimbursements = employee_reimbursements.filter(status='approved').count()
-    declined_reimbursements = employee_reimbursements.filter(status='declined').count()
-    pending_reimbursements = employee_reimbursements.filter(status='pending').count()
-
-
+      
     return render(request, 'accounts/manager_home.html', {
         'managed_employees': managed_employees,
         'employee_reimbursements': employee_reimbursements,
