@@ -11,41 +11,6 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Reimbursements</h5>
-                    <p class="card-text">{{ total_reimbursements }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Approved</h5>
-                    <p class="card-text">{{ approved_reimbursements }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-danger mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Declined</h5>
-                    <p class="card-text">{{ declined_reimbursements }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Pending</h5>
-                    <p class="card-text">{{ pending_reimbursements }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div id="your-manager" class="row">
         <div class="col-12">
             <div class="card mb-4">
@@ -105,7 +70,7 @@
                                         <td>{{ reimbursement.status }}</td>
                                         <td><textarea class="form-control" readonly>{{ reimbursement.manager_comments|default:"No comments" }}</textarea></td>
                                         <td>{{ reimbursement.description|default:"No description" }}</td>
-                                        <td>{{ reimbursement.date }}</td>
+                                        <td>{{ reimbursement.date|date:"F j, Y" }}</td>
                                         <td>{% if reimbursement.document %}<a href="{{ reimbursement.document.url }}" class="btn btn-link">View Document</a>{% endif %}</td>
                                         <td><a href="{% url 'reimbursements:detail' reimbursement.pk %}" class="btn btn-link">View Details</a></td>
                                     </tr>
