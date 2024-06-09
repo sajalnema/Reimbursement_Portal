@@ -48,6 +48,11 @@ class Reimbursement(models.Model):
         if not self.admin:
             self.admin = CustomUser.objects.filter(is_superuser=True).first()
         super().save(*args, **kwargs)
+
+        # Ensure date is not null
+        if not self.date:
+            self.date = timezone.now().date()
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return f"{self.employee} - {self.get_category_display()} - {self.amount}"

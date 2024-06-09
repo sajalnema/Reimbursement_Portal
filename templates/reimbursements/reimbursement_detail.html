@@ -14,7 +14,7 @@
             <p><strong>Status:</strong> {{ reimbursement.status }}</p>
             <p><strong>Created At:</strong> {{ reimbursement.created_at }}</p>
             <p><strong>Updated At:</strong> {{ reimbursement.updated_at }}</p>
-            <p><strong>Date:</strong> {{ reimbursement.date|date:"F j, Y" }}</p>
+            <p><strong>Date:</strong> {{ reimbursement.date|date:"F j, Y" | default:"Not provided" }}</p>
             <p>
                 <strong>Document:</strong>
                 {% if reimbursement.document %}

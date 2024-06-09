@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.db.models import Q
 from reimbursements.forms import ReimbursementForm 
 from .utils import redirect_to_dashboard
-
+from django.utils import timezone
 
 import logging  # for application log
 
@@ -324,10 +324,20 @@ def approve_reimbursement(request, pk):
     if request.method == 'POST':
         action = request.POST.get('action')
         reimbursement.manager_comments = request.POST.get('manager_comments', '')
+    
+
+        if request.POST.get('date'):
+            reimbursement.date = request.POST.get('date')  # Ensure date is set from the form input
+
+
         if action == 'approve':
             reimbursement.status = 'approved'
         elif action == 'decline':
             reimbursement.status = 'declined'
+
+        if reimbursement.date:
+            reimbursement.date = reimbursement.date
+
         reimbursement.save()
         logger.info(f"Reimbursement ID {pk} {action}d by user {request.user.username}")
 
@@ -355,6 +365,10 @@ def decline_reimbursement(request, pk):
     if request.method == 'POST':
         reimbursement.status = 'declined'
         reimbursement.manager_comments = request.POST.get('manager_comments', '')
+        
+        if reimbursement.date:
+            reimbursement.date = reimbursement.date
+            
         reimbursement.save()
         logger.info(f"Reimbursement ID {pk} declined by user {request.user.username}")
 

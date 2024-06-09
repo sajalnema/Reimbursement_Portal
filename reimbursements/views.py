@@ -27,6 +27,7 @@ def submit_reimbursement(request):
             reimbursement.employee = request.user
             reimbursement.created_at = timezone.now()  # Ensure created_at is set to current time
             reimbursement.updated_at = timezone.now()
+            reimbursement.date = form.cleaned_data.get('date')
             reimbursement.save()
             logger.info(f"Reimbursement submitted by {request.user.username}")
             return redirect('accounts:employee_home')
@@ -98,6 +99,7 @@ def approve_reimbursement(request, pk):
             reimbursement.status = 'approved'
         elif action == 'decline':
             reimbursement.status = 'declined'
+        reimbursement.updated_at = timezone.now()
         reimbursement.save()
 
         if request.user.is_superuser:
@@ -118,6 +120,7 @@ def decline_reimbursement(request, pk):
     if request.method == 'POST':
         reimbursement.status = 'declined'
         reimbursement.manager_comments = request.POST.get('manager_comments', '')
+        reimbursement.updated_at = timezone.now()
         reimbursement.save()
         print(f"Reimbursement declined with comments: {reimbursement.manager_comments}")
 
