@@ -10,6 +10,8 @@ from django.db.models import Q
 from reimbursements.forms import ReimbursementForm 
 from .utils import redirect_to_dashboard
 from django.utils import timezone
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.contrib import messages
 
 import logging  # for application log
 
@@ -64,14 +66,20 @@ def is_employee_or_manager(user):
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            next_url = request.POST.get('next') or reverse('accounts:home')
-            logger.info(f"User {user.username} logged in")
-            return redirect(next_url)
-        else:
-            logger.warning(f"Login form errors: {form.errors}")
+        try:
+            if form.is_valid():
+                user = form.get_user()
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                next_url = request.POST.get('next') or reverse('accounts:home')
+                logger.info(f"User {user.username} logged in")
+                messages.success(request, 'Login successful.')
+                return redirect(next_url)
+            else:
+                messages.error(request, 'Invalid username or password.')
+                logger.warning(f"Login form errors: {form.errors}")
+        except Exception as e:
+            messages.error(request, 'An unexpected error occurred during login. Please try again later.')
+            logger.error(f"Unexpected error during login: {e}")
     else:
         form = AuthenticationForm()
     return render(request, 'accounts/login.html', {'form': form, 'next': request.GET.get('next', '')})
@@ -79,13 +87,20 @@ def login_view(request):
 def signup_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            logger.info(f"User {user.username} signed up")
-            return redirect('accounts:home')
-        else:
-            logger.warning(f"Signup form errors: {form.errors}")
+        try:
+            if form.is_valid():
+                user = form.save()
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                logger.info(f"User {user.username} signed up")
+                messages.success(request, 'Signup successful.')
+                return redirect('accounts:home')
+            else:
+                logger.warning(f"Signup form errors: {form.errors}")
+                messages.error(request, 'There was an error with your form. Please correct the errors and try again.')
+         
+        except Exception as e:
+            messages.error(request, 'An unexpected error occurred during signup. Please try again later.')
+            logger.error(f"Unexpected error during signup: {e}")
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/signup.html', {'form': form})
