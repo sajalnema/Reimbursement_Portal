@@ -1,104 +1,37 @@
 from django.test import TestCase
-from django.core.exceptions import ValidationError
-from django.utils import timezone
-from django.contrib.auth import get_user_model
-from accounts.models import Department, CustomUser
+from accounts.models import CustomUser, Department
 
-class ReimbursementModelTest(TestCase):
-
+class ModelsTestCase(TestCase):
     def setUp(self):
-        self.user = get_user_model().objects.create_user(
-            username='employee',
-            email='employee@nucleusteq.com',
+        self.department = Department.objects.create(name="HR")
+
+    def test_create_department(self):
+        department = Department.objects.create(name="Finance")
+        self.assertEqual(department.name, "Finance")
+        self.assertEqual(str(department), "Finance")
+
+    def test_create_custom_user(self):
+        user = CustomUser.objects.create_user(
+            username='testuser',
+            email='testuser@nucleusteq.com',
             password='password123',
-            is_employee=True
+            is_employee=True,
+            department=self.department
         )
-        self.department = Department.objects.create(name='HR', manager=self.user)
-        self.user.department = self.department
-        self.user.save()
+        self.assertEqual(user.username, 'testuser')
+        self.assertEqual(user.email, 'testuser@nucleusteq.com')
+        self.assertTrue(user.is_employee)
+        self.assertEqual(user.department.name, 'HR')
+        self.assertEqual(str(user), 'testuser')
 
-    def test_reimbursement_creation(self):
-        reimbursement = Reimbursement.objects.create(
-            employee=self.user,
-            category='travel',
-            amount=1000,
-            description='Business trip to NYC'
-        )
-        self.assertEqual(reimbursement.status, 'pending')
-        self.assertEqual(reimbursement.amount, 1000)
-        self.assertEqual(reimbursement.category, 'travel')
-        self.assertEqual(reimbursement.description, 'Business trip to NYC')
-        self.assertEqual(str(reimbursement), f"{self.user} - Travelling - 1000.00")
-
-    def test_reimbursement_amount_limit(self):
-        reimbursement = Reimbursement(
-            employee=self.user,
-            category='travel',
-            amount=20000,  # Exceeds the limit for travel
-            description='Business trip to NYC'
-        )
-        with self.assertRaises(ValidationError) as context:
-            reimbursement.clean()
-        self.assertIn('Amount exceeds the limit for Travelling category', str(context.exception))
-
-    def test_reimbursement_default_admin(self):
-        superuser = get_user_model().objects.create_user(
-            username='admin',
-            email='admin@nucleusteq.com',
+    def test_promote_to_manager(self):
+        user = CustomUser.objects.create_user(
+            username='testuser',
+            email='testuser@nucleusteq.com',
             password='password123',
-            is_superuser=True
+            is_employee=True,
+            department=self.department
         )
-        reimbursement = Reimbursement.objects.create(
-            employee=self.user,
-            category='tech_assets',
-            amount=1000,
-            description='New laptop'
-        )
-        self.assertEqual(reimbursement.admin, superuser)
-
-    def test_reimbursement_invalid_amount_or_category(self):
-        reimbursement = Reimbursement(
-            employee=self.user,
-            amount=None,
-            category=None
-        )
-        with self.assertRaises(ValidationError) as context:
-            reimbursement.clean()
-        self.assertIn('Amount and category must not be None', str(context.exception))
-
-class AuditLogModelTest(TestCase):
-
-    def setUp(self):
-        self.user = get_user_model().objects.create_user(
-            username='employee',
-            email='employee@nucleusteq.com',
-            password='password123',
-            is_employee=True
-        )
-        self.reimbursement = Reimbursement.objects.create(
-            employee=self.user,
-            category='travel',
-            amount=1000,
-            description='Business trip to NYC'
-        )
-
-    def test_audit_log_creation(self):
-        audit_log = AuditLog.objects.create(
-            user=self.user,
-            reimbursement=self.reimbursement,
-            action='created',
-            comments='Initial submission'
-        )
-        self.assertEqual(audit_log.user, self.user)
-        self.assertEqual(audit_log.reimbursement, self.reimbursement)
-        self.assertEqual(audit_log.action, 'created')
-        self.assertEqual(audit_log.comments, 'Initial submission')
-        self.assertEqual(str(audit_log), f"{self.reimbursement} - created by {self.user} at {audit_log.timestamp}")
-
-    def test_audit_log_default_timestamp(self):
-        audit_log = AuditLog.objects.create(
-            user=self.user,
-            reimbursement=self.reimbursement,
-            action='created'
-        )
-        self.assertAlmostEqual(audit_log.timestamp, timezone.now(), delta=timezone.timedelta(seconds=1))
+        user.promote_to_manager()
+        self.assertTrue(user.is_manager)
+        self.assertFalse(user.is_employee)

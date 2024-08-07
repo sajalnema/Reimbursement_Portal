@@ -67,10 +67,12 @@ DATABASES = {
         'NAME': 'reimbursement_portal',
         'USER': 'root',
         'PASSWORD': 'root@123',
-        'HOST': 'localhost',
+        'HOST': 'mysql',
         'PORT': '3306',
     }
 }
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -204,3 +206,12 @@ MESSAGE_TAGS = {
     messages.WARNING: 'warning',
     messages.ERROR: 'error',
 }
+
+
+
+
+# Read environment variables
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost').split()
+CSRF_TRUSTED_ORIGINS = os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS', 'http://localhost:8000').split()
+
+# Your other settin
